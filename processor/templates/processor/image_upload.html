@@ -1,5 +1,22 @@
-<form method="post" enctype="multipart/form-data" action="{% url 'image-upload' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Upload</button>
-</form>
+{% load static %} <!-- Don't forget to load the static if you're using any static files -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload and Process Image</title>
+    <!-- Include any CSS files here -->
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+</head>
+<body>
+    <h1>Image Upload</h1>
+    <p>Choose an image to upload and set the processing parameters.</p>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'image-upload' %}">
+        {% csrf_token %}
+        {{ image_form.as_p }}
+        {{ options_form.as_p }}
+        <button type="submit">Process Image</button>
+    </form>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import os
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
-from .forms import ImageUploadForm
+from .forms import ImageUploadForm, ImageProcessingOptionsForm  # Make sure to import the new form
 from .models import ImageUpload
 from .image_processing import process_image
 from django.conf import settings
@@ -9,10 +9,21 @@ from zipfile import ZipFile
 
 def image_upload_view(request):
     if request.method == 'POST':
-        form = ImageUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            obj = form.save()
-            full_image_path, group_images_paths = process_image(obj.image.path)
+        image_form = ImageUploadForm(request.POST, request.FILES)
+        options_form = ImageProcessingOptionsForm(request.POST)  # Instantiate the options form
+        if image_form.is_valid() and options_form.is_valid():
+            obj = image_form.save()
+            # Extract options data from the form
+            group_radius = options_form.cleaned_data.get('group_radius')
+            min_dots = options_form.cleaned_data.get('min_dots')
+            threshold = options_form.cleaned_data.get('threshold')
+            circle_color = options_form.cleaned_data.get('circle_color')
+            circle_width = options_form.cleaned_data.get('circle_width')
+
+            # Pass the options to the process_image function
+            full_image_path, group_images_paths = process_image(
+                obj.image.path, group_radius, min_dots, threshold, circle_color, circle_width
+            )
             
             # Create a zip file
             zip_filename = "group_images.zip"
@@ -28,8 +39,12 @@ def image_upload_view(request):
             }
             return render(request, 'processor/image_result.html', context)
     else:
-        form = ImageUploadForm()
-    return render(request, 'processor/image_upload.html', {'form': form})
+        image_form = ImageUploadForm()
+        options_form = ImageProcessingOptionsForm()  # Instantiate the options form for GET request
+    return render(request, 'processor/image_upload.html', {
+        'image_form': image_form,
+        'options_form': options_form  # Include the options form in the context
+    })
 
 def landing_page(request):
     return render(request, 'processor/landing_page.html')
