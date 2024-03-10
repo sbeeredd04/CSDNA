@@ -6,23 +6,37 @@
 </head>
 <body>
     <h2>Processed Full Image</h2>
-    <img src="{{ MEDIA_URL }}{{ full_image_path }}" alt="Processed Full Image" />
-    <br />
-    <!-- Link to download the full image -->
-    <a href="{{ MEDIA_URL }}{{ full_image_path }}" download>Download Full Image</a>
-    <br />
+    {% if full_image_path %}
+        <img src="{{ MEDIA_URL }}{{ full_image_path }}" alt="Processed Full Image" />
+        <br />
+        <!-- Link to download the full image -->
+        <a href="{{ MEDIA_URL }}{{ full_image_path }}" download>Download Full Image</a>
+        <br />
+    {% else %}
+        <p>No full image available.</p>
+    {% endif %}
 
     <h2>Processed Image Groups</h2>
-    {% for path in group_images_paths %}
-        <div>
-            <img src="{{ MEDIA_URL }}{{ path }}" alt="Processed Image Group" />
-            <!-- Link to download each individual group image -->
-            <a href="{{ MEDIA_URL }}{{ path }}" download>Download {{ path }}</a>
-        </div>
-    {% endfor %}
+    {% if group_images_paths %}
+        {% for path in group_images_paths %}
+            <div>
+                <img src="{{ MEDIA_URL }}{{ path }}" alt="Processed Image Group" />
+                <!-- Link to download each individual group image -->
+                <a href="{{ MEDIA_URL }}{{ path }}" download>Download {{ path }}</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No group images available.</p>
+    {% endif %}
 
     <br />
-    <!-- Link to download all group images in a zip -->
-    <a href="{% url 'download-zip' zip_file=zip_file %}" download>All Group Images</a>
+    <!-- Conditional check to ensure the zip file exists before attempting to create a download link -->
+    {% if full_images_zip %}
+        <a href="{% url 'download-zip' zip_file=full_images_zip %}" download>Download Full Images Zip</a>
+        <br />
+    {% endif %}
+    {% if groups_zip %}
+        <a href="{% url 'download-zip' zip_file=groups_zip %}" download>Download Group Images Zip</a>
+    {% endif %}
 </body>
 </html>
