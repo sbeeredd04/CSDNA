@@ -1,0 +1,422 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+.landing-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('/static/processor/images/backgroundimagecsdna.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.landing-page-container { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.80);
+    padding: 40px;
+    border-radius: 10px;
+    margin: 20px;
+    height : auto;
+    width: 80%;
+}
+
+.landing-page-content h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.landing-page-content p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.cs { 
+    color: #ca6abd;
+}
+
+.DNA {
+    color: #55A8E6;
+}
+.shadow__btn {
+    padding: 10px 20px;
+    border: none;
+    font-size: 17px;
+    color: #fff;
+    border-radius: 7px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.5s;
+    transition-property: box-shadow;
+    margin-top: 2.5rem;
+  }
+
+  .shadow__btn a {
+    text-decoration: none;
+    color: #ffffff;
+  }
+  
+  .shadow__btn {
+    /*button color and box shadow with linear gradient for #BC8FB6 #55A8E6 #4C59A2  */
+    background: linear-gradient(90deg, #ca6abd, #55A8E6);
+    box-shadow: 0 0 5px #000,
+                0 0 25px #000,
+                0 0 50px #000,
+                0 0 100px #000;
+    }
+  
+  .shadow__btn:hover {
+    box-shadow: 0 0 25px #55A8E6,
+                0 0 50px #ca6abd;
+  }
+
+
+.header h1 { 
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.header p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Style the file input */
+input[type="file"] {
+
+    width: 100%; /* Set the width to fit the container */
+    padding: 10px; /* Add some padding inside the input fields */
+    margin: 8px 0; /* Add some margin around the input fields */
+    display: inline-block;
+    border: 1px solid #fff; /* Add a border to the input fields */
+    border-radius: 12px; /* Round the corners of the input fields */
+    box-sizing: border-box; /* Box-sizing */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Style text inputs by name attribute */
+input[name="group_radius"],
+input[name="min_dots"],
+input[name="threshold"] {
+    
+    width: 100%; /* Set the width to fit the container */
+    padding: 10px; /* Add some padding inside the input fields */
+    margin: 8px 0; /* Add some margin around the input fields */
+    display: inline-block;
+    border: 1px solid #fff; /* Add a border to the input fields */
+    border-radius: 12px; /* Round the corners of the input fields */
+    box-sizing: border-box; /* Box-sizing */
+    text-align: center;
+    font: 1rem 'Roboto', sans-serif;
+    margin-bottom: 20px;
+}
+
+/* Style select input by name */
+select[name="circle_color"],
+input[name="circle_color"],
+input[name="circle_width"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #fff;
+    border-radius: 12px;
+    box-sizing: border-box;
+    text-align: center;
+    font: 1rem 'Roboto', sans-serif;
+    margin-bottom: 20px;
+}
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-row-upload { 
+    display: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px; /* Add some space between the groups */
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #FFFFFF;
+    margin-bottom: 5px;
+}
+
+/*style for the loading overlay*/
+#loadingOverlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed; /* or absolute depending on your layout */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 9999; /* Ensure it's on top of everything */
+  }
+  
+  .loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  
+  .bar {
+    display: inline-block;
+    width: 8px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, .5);
+    border-radius: 10px;
+    animation: scale-up4 1s linear infinite;
+  }
+  
+  .bar:nth-child(2) {
+    height: 35px;
+    margin: 0 5px;
+    animation-delay: .25s;
+  }
+  
+  .bar:nth-child(3) {
+    animation-delay: .5s;
+  }
+  
+  @keyframes scale-up4 {
+    0%, 40%, 100% {
+      background-color: rgba(255, 255, 255, .5);
+      transform: scaleY(1);
+    }
+    20% {
+      background-color: #ffffff;
+      transform: scaleY(1.5);
+    }
+  }
+  
+  /* Existing styles ... */
+
+/* Results Page Styles */
+.results-page {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    align-items: center;
+    background-image: url('/static/processor/images/backgroundimagecsdna.jpg');
+    background-size: cover;
+    background-position: center;
+    overflow-y: auto;
+}
+
+.results-page ::-webkit-scrollbar {
+    width: 8px;
+}
+
+.results-page ::-webkit-scrollbar-track {
+    background: #1d1d1d;
+    border-radius: 4px;
+}
+
+.results-page ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.results-page ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+.results-page-container {
+    background-color: rgba(0, 0, 0, 0.90);
+    border-radius: 10px;
+    padding: 40px;
+    margin: 20px;
+    width: 80%;
+    color: #fff;
+    text-align: center;
+    margin-top: 7.5%;
+}
+
+.individual-images {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: auto;
+    text-align: center;
+}
+
+.individual-images a {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.individual-images a:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+.header { 
+    margin-bottom: 20px;
+    margin-top: 20px;
+    padding: 40px;
+}
+.results-page-container .header h1 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.results-page-container .header p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.results-page-container .header img {
+    width: 25%;
+    height: auto;
+    margin-bottom: 2rem;
+}
+
+.header a {
+    display: inline-block;
+    background-color: #ec7cdd;
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-right: 10px;
+    margin-bottom: 20px;
+
+}
+
+.processed-groups h2 { 
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.image-results {
+    margin-bottom: 20px;
+    overflow-x: auto;
+    display: flex;
+    gap: 20px;
+}
+
+.image-results div {
+    flex: none;
+    width: auto;
+}
+
+.image-results img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-results a { 
+    display: inline-block;
+    margin-top: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.zip-files {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.zip-files a {
+    display: inline-block;
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.zip-files a:hover {
+    background-color: #0056b3;
+}
+
+/* Add a scrollbar styling if needed */
+.image-results::-webkit-scrollbar {
+    height: 8px;
+}
+
+.image-results::-webkit-scrollbar-track {
+    background: #1d1d1d;
+    border-radius: 4px;
+}
+
+.image-results::-webkit-scrollbar-thumb {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.image-results::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+.back-button { 
+    top: 0;
+    left: 0;
+    position: absolute;
+    margin-top: 20px;
+    margin-left: 20px;
+    padding: 10px 20px;
+    border: none;
+    font-size: 17px;
+    color: #fff;
+    border-radius: 7px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.5s;
+    transition-property: box-shadow;
+    margin-top: 2.5rem;
+    background: linear-gradient(90deg, #ca6abd, #55A8E6);
+}
+
+.back-button:hover {
+    box-shadow: 0 0 25px #55A8E6,
+                0 0 50px #ca6abd;
+}
+
+.back-button a {
+    text-decoration: none;
+    color: #ffffff;
+}

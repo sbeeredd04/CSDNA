@@ -1,22 +1,77 @@
-{% load static %} <!-- Don't forget to load the static if you're using any static files -->
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Upload and Process Image</title>
-    <!-- Include any CSS files here -->
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
+    
 </head>
 <body>
-    <h1>Image Upload</h1>
-    <p>Choose an image to upload and set the processing parameters.</p>
+    <div class="landing-page">
+        <div class="landing-page-container">
 
-    <form method="post" enctype="multipart/form-data" action="{% url 'image-upload' %}">
-        {% csrf_token %}
-        {{ image_form.as_p }}
-        {{ options_form.as_p }}
-        <button type="submit">Process Image</button>
-    </form>
+            <button class = "back-button"><a href="{% url 'landing-page' %}"><- Back</a></button>
+
+            <div class="header">
+                <h1><span class="cs">Image</span><span class="DNA"> Processor</span></h1>
+                <p>Choose an image to upload and set the processing parameters.</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" action="{% url 'image-upload' %}" class="image-upload-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ image_form.image.label_tag }}
+                    {{ image_form.image }}
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ options_form.group_radius.label_tag }}
+                        {{ options_form.group_radius }}
+                    </div>
+                    <div class="form-group">
+                        {{ options_form.min_dots.label_tag }}
+                        {{ options_form.min_dots }}
+                    </div>
+                    <div class="form-group">
+                        {{ options_form.threshold.label_tag }}
+                        {{ options_form.threshold }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ options_form.circle_color.label_tag }}
+                        {{ options_form.circle_color }}
+                    </div>
+                    <div class="form-group">
+                        {{ options_form.circle_width.label_tag }}
+                        {{ options_form.circle_width }}
+                    </div>
+                </div>
+                <button class="shadow__btn" type="submit">Process Image</button>
+            </form>
+
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" style="display: none;">
+                <div class="loader">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+                <p>Processing image, please wait...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to show the loading overlay on form submit -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var form = document.querySelector('.image-upload-form');
+            form.onsubmit = function() {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            };
+        });
+    </script>
 </body>
 </html>

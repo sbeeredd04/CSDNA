@@ -1,3 +1,8 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,38 +10,55 @@
     <title>Processed Image Results</title>
 </head>
 <body>
-    <h2>Processed Full Image</h2>
-    {% if full_image_path %}
-        <img src="{{ MEDIA_URL }}{{ full_image_path }}" alt="Processed Full Image" />
-        <br />
-        <!-- Link to download the full image -->
-        <a href="{{ MEDIA_URL }}{{ full_image_path }}" download>Download Full Image</a>
-        <br />
-    {% else %}
-        <p>No full image available.</p>
-    {% endif %}
+    <div class = "results-page">
 
-    <h2>Processed Image Groups</h2>
-    {% if group_images_paths %}
-        {% for path in group_images_paths %}
-            <div>
-                <img src="{{ MEDIA_URL }}{{ path }}" alt="Processed Image Group" />
-                <!-- Link to download each individual group image -->
-                <a href="{{ MEDIA_URL }}{{ path }}" download>Download {{ path }}</a>
+        <div class = "results-page-container">
+            <!-- back button-->
+            <button class = "back-button"><a href="{% url 'image-upload' %}"><- Back</a></button>
+
+            <div class= "header">
+                <h1> <span class = "cs">Processed</span><span class = "DNA"> Full Image<span></h1>
+                    {% if full_image_path %}
+                        <img src="{{ MEDIA_URL }}{{ full_image_path }}" alt="Processed Full Image" />
+                        <br />
+                        <!-- Link to download the full image -->
+                        <a href="{{ MEDIA_URL }}{{ full_image_path }}" download>Download Full Image</a>
+                        <br />
+                    {% else %}
+                        <p>No full image available.</p>
+                    {% endif %}
             </div>
-        {% endfor %}
-    {% else %}
-        <p>No group images available.</p>
-    {% endif %}
 
-    <br />
-    <!-- Conditional check to ensure the zip file exists before attempting to create a download link -->
-    {% if full_images_zip %}
-        <a href="{% url 'download-zip' zip_file=full_images_zip %}" download>Download Full Images Zip</a>
-        <br />
-    {% endif %}
-    {% if groups_zip %}
-        <a href="{% url 'download-zip' zip_file=groups_zip %}" download>Download Group Images Zip</a>
-    {% endif %}
+
+                <div class= "image-results">
+                    {% if group_images_paths %}
+                        {% for path in group_images_paths %}
+                            <div class = "individual-images">
+                                <img src="{{ MEDIA_URL }}{{ path }}" alt="Processed Image Group" />
+                                <!-- Link to download each individual group image -->
+                                <a href="{{ MEDIA_URL }}{{ path }}" download>Download</a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No group images available.</p>
+                    {% endif %}
+                </div>
+
+            <div class= "zip-files">
+                <br />
+                <!-- Conditional check to ensure the zip file exists before attempting to create a download link -->
+                {% if full_images_zip %}
+                    <a href="{% url 'download-zip' zip_file=full_images_zip %}" download>Download Full Images Zip</a>
+                    <br />
+                {% endif %}
+                {% if groups_zip %}
+                    <a href="{% url 'download-zip' zip_file=groups_zip %}" download>Download Group Images Zip</a>
+                {% endif %}
+            </div>
+                    
+        </div>
+    </div>
+
+
 </body>
 </html>
