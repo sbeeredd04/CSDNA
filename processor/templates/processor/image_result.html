@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processed Image Results</title>
+</head>
+<body>
+    <h2>Processed Full Image</h2>
+    <img src="{{ MEDIA_URL }}{{ full_image_path }}" alt="Processed Full Image" />
+    <br />
+    <!-- Link to download the full image -->
+    <a href="{{ MEDIA_URL }}{{ full_image_path }}" download>Download Full Image</a>
+    <br />
+
+    <h2>Processed Image Groups</h2>
+    {% for path in group_images_paths %}
+        <div>
+            <img src="{{ MEDIA_URL }}{{ path }}" alt="Processed Image Group" />
+            <!-- Link to download each individual group image -->
+            <a href="{{ MEDIA_URL }}{{ path }}" download>Download {{ path }}</a>
+        </div>
+    {% endfor %}
+
+    <br />
+    <!-- Link to download all group images in a zip -->
+    <a href="{% url 'download-zip' zip_file=zip_file %}" download>All Group Images</a>
+</body>
+</html>
