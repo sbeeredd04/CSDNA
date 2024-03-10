@@ -1,0 +1,5 @@
+pip install django
+pip install Pillow
+pip install os
+pip install numpy
+pip install glob
