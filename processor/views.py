@@ -108,6 +108,11 @@ def label_image_view(request):
         'total_images': len(images),
         'analyzed_images': len(images) - len(remaining_images),
     }
+    
+    #sorting the csv file according to alphanumeric series
+    with open(csv_file_path, 'r', newline='') as file:
+        reader = csv.reader(file)
+        sorted_list = sorted(reader, key=lambda row: row[0])
 
     return render(request, 'processor/label_image.html', context)
 
