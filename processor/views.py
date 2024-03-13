@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 import shutil
 from django.core.files.storage import FileSystemStorage
+import csv
 
 def image_upload_view(request):
     
@@ -64,66 +65,81 @@ def download_zip(request, zip_file):
 
 
 def label_image_view(request):
-    if 'labeled_images' not in request.session:
-        request.session['labeled_images'] = []
+    # Define the path for the CSV file where labels are stored
+    csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
+    
+    # Ensure the CSV file exists and has the appropriate headers
+    if not os.path.exists(csv_file_path):
+        with open(csv_file_path, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Image', 'Label'])  # Header
 
-    labeled_images = request.session['labeled_images']
+    # Load the list of images
+    images = [img for img in os.listdir(settings.MEDIA_ROOT) if img.endswith(('jpg', 'jpeg', 'png'))]
+    
+    # Sort the images to ensure consistent order
+    images.sort()
 
-    # Filter out the labeled images
-    group_images_paths = [
-        img_path for img_path in os.listdir(settings.MEDIA_ROOT)
-        if img_path.startswith("group") and img_path not in labeled_images
-    ]
+    # Attempt to retrieve the current image index from the session
+    current_index = request.session.get('current_image_index', 0)
 
-    if request.method == "POST":
-        image_path = request.POST.get("image_path")
-        label = request.POST.get("label")
-        relative_path = os.path.relpath(image_path, settings.MEDIA_ROOT)
+    # If the form has been submitted
+    if request.method == 'POST':
+        label = request.POST.get('label', 'No')
+        
+        # Write the label to the CSV file
+        with open(csv_file_path, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([images[current_index], label])
 
-        # Save the labeled data to the database
-        LabeledImage.objects.create(image_path=relative_path, label=label)
+        # Move to the next image
+        current_index += 1
+        request.session['current_image_index'] = current_index
 
-        # Add the labeled image to the session to avoid labeling again
-        labeled_images.append(image_path)
-        request.session.modified = True
+        # If all images have been labeled, redirect to a completion view
+        if current_index >= len(images):
+            return HttpResponseRedirect(reverse('all_labeled'))
 
-        # If there are more images to label, continue to the next one
-        if group_images_paths:
-            # Remove the labeled image from the list for the next iteration
-            group_images_paths.remove(image_path)
-
-    if group_images_paths:
-        # Proceed to label the next image
-        image_path = group_images_paths[0]
-        fs = FileSystemStorage()
-        image_url = fs.url(image_path)
-        context = {'image_path': image_path, 'image_url': image_url}
+    # If there are still images to be labeled
+    if current_index < len(images):
+        image_path = images[current_index]
+        context = {
+            'image_path': image_path,
+            'image_url': os.path.join(settings.MEDIA_URL, image_path)
+        }
         return render(request, 'processor/label_image.html', context)
-    else:
-        # If no images are left to label, redirect to the completion view
-        return HttpResponseRedirect(reverse('all_labeled'))
+
+    # If no more images to label, redirect to completion
+    return HttpResponseRedirect(reverse('all_labeled'))
+
+
 
 
 
 def download_labeled_data_view(request):
-    # Path to the CSV file
+    # Path to the CSV file you want to save
     csv_file_path = os.path.join(settings.MEDIA_ROOT, 'labeled_images.csv')
     
-    print("\n")
-    print("csv_file_path: ", csv_file_path)
-    print("\n")
-    
+    # Make sure the directory exists
+    os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
+
     # Gather all labeled images
     labeled_images = LabeledImage.objects.all()
 
-    # Prepare CSV data
-    csv_data = "image_path,label\n"
-    for image in labeled_images:
-        csv_data += f"{image.image_path},{image.label}\n"
-
-    # Create a response with a CSV file
-    response = HttpResponse(csv_data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="labeled_images.csv"'
+    # Open the file to write or overwrite as needed ('w' mode)
+    with open(csv_file_path, 'w', newline='') as csvfile:
+        # CSV writer object
+        csvwriter = csv.writer(csvfile)
+        # Write the header
+        csvwriter.writerow(["image_path", "label"])
+        # Write each labeled image data
+        for image in labeled_images:
+            csvwriter.writerow([image.image_path, image.label])
+    
+    # After saving the file, you can read it back to send in the response
+    with open(csv_file_path, 'rb') as csvfile:
+        response = HttpResponse(csvfile.read(), content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(csv_file_path)}"'
 
     return response
 
