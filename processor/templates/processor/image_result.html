@@ -15,7 +15,8 @@
         <div class = "results-page-container">
             <!-- back button-->
             <button class = "back-button"><a href="{% url 'image-upload' %}"><- Back</a></button>
-
+            <button class = "next"><a href="{% url 'label-image' %}">Next -></a></button>
+            
             <div class= "header">
                 <h1> <span class = "cs">Processed</span><span class = "DNA"> Full Image<span></h1>
                     {% if full_image_path %}

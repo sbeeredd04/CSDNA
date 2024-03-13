@@ -1,0 +1,23 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Label Image</title>
+</head>
+<body>
+    {% if image_path %}
+        <!-- Use the custom filter here -->
+        <img src="{{ image_path|replace_media_path }}" alt="Image to Label">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="image_path" value="{{ image_path }}">
+            <button type="submit" name="label" value="Yes">Yes</button>
+            <button type="submit" name="label" value="No">No</button>
+        </form>
+    {% else %}
+        <p>No more images to label.</p>
+    {% endif %}
+</body>
+</html>

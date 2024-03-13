@@ -420,3 +420,33 @@ input[name="circle_width"] {
     text-decoration: none;
     color: #ffffff;
 }
+
+.next-button {
+    top: 0;
+    right: 0;
+    position: absolute;
+    margin-top: 20px;
+    margin-right: 20px;
+    padding: 10px 20px;
+    border: none;
+    font-size: 17px;
+    color: #fff;
+    border-radius: 7px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.5s;
+    transition-property: box-shadow;
+    margin-top: 2.5rem;
+    background: linear-gradient(90deg, #ca6abd, #55A8E6);
+}
+
+.next-button:hover {
+    box-shadow: 0 0 25px #55A8E6,
+                0 0 50px #ca6abd;
+}
+
+.next-button a {
+    text-decoration: none;
+    color: #ffffff;
+}
