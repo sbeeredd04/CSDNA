@@ -3,21 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Label Image</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('keydown', function (e) {
+                // Check if the pressed key is '1' or '0'
+                if (e.key === '1') {
+                    // Simulate clicking the 'Yes' button
+                    document.getElementById('yes-button').click();
+                } else if (e.key === '0') {
+                    // Simulate clicking the 'No' button
+                    document.getElementById('no-button').click();
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     {% if image_url %}
         <img src="{{ image_url }}" alt="Image to Label">
-        <form method="POST">
+        <form method="POST" id="label-form">
             {% csrf_token %}
             <input type="hidden" name="image_path" value="{{ image_path }}">
-            <button type="submit" name="label" value="Yes">Yes</button>
-            <button type="submit" name="label" value="No">No</button>
+            <!-- Add IDs to the buttons for the JavaScript to target -->
+            <button type="submit" name="label" value="1" id="yes-button">Yes</button>
+            <button type="submit" name="label" value="0" id="no-button">No</button>
         </form>
         <p>Images Analyzed: {{ analyzed_images }} / {{ total_images }}</p>
         <p>Remaining Images: {{ remaining_images }}</p>
     {% else %}
         <p>No more images to label.</p>
-        <button class = "csv-button"><a href="{% url 'all_labeled' %}">Download CSV</a></button>
+        <a href="{% url 'all_labeled' %}"><button class="csv-button">Download CSV</button></a>
     {% endif %}
 </body>
 </html>

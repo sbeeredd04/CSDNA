@@ -92,7 +92,7 @@ def label_image_view(request):
     current_image = remaining_images[0] if remaining_images else None
 
     if request.method == 'POST' and current_image:
-        label = request.POST.get('label', 'No')
+        label = request.POST.get('label', '0')
         # Write the label to the CSV file
         with open(csv_file_path, 'a', newline='') as file:
             writer = csv.writer(file)
