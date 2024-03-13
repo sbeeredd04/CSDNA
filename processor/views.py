@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 import shutil
+from django.core.files.storage import FileSystemStorage
 
 def image_upload_view(request):
     
@@ -63,47 +64,55 @@ def download_zip(request, zip_file):
 
 
 def label_image_view(request):
-    # Load or initialize the session variable for labeled images
     if 'labeled_images' not in request.session:
         request.session['labeled_images'] = []
 
     labeled_images = request.session['labeled_images']
 
-    # Find unlabeled images
-    group_images_paths = [os.path.join(settings.MEDIA_ROOT, img_path) for img_path in os.listdir(settings.MEDIA_ROOT) if img_path.startswith("group") and os.path.join(settings.MEDIA_ROOT, img_path) not in labeled_images]
-
-    if not group_images_paths:
-        # If no images are left or labeling hasn't started, redirect to a different page (e.g., 'all-labeled' or the download page)
-        return HttpResponseRedirect(reverse('all_labeled'))
+    # Filter out the labeled images
+    group_images_paths = [
+        img_path for img_path in os.listdir(settings.MEDIA_ROOT)
+        if img_path.startswith("group") and img_path not in labeled_images
+    ]
 
     if request.method == "POST":
         image_path = request.POST.get("image_path")
         label = request.POST.get("label")
-        # Ensure the path is relative to MEDIA_ROOT for security
         relative_path = os.path.relpath(image_path, settings.MEDIA_ROOT)
+
+        # Save the labeled data to the database
         LabeledImage.objects.create(image_path=relative_path, label=label)
 
-        # Add the labeled image to the session variable and save
-        request.session['labeled_images'].append(image_path)  # Store full path for uniqueness
+        # Add the labeled image to the session to avoid labeling again
+        labeled_images.append(image_path)
         request.session.modified = True
 
-        # Redirect to label the next image or to the completion view if all are labeled
-        return HttpResponseRedirect(request.path)
+        # If there are more images to label, continue to the next one
+        if group_images_paths:
+            # Remove the labeled image from the list for the next iteration
+            group_images_paths.remove(image_path)
 
-    # Show the next image to label
-    context = {'image_path': group_images_paths[0] if group_images_paths else None}
-    return render(request, 'processor/label_image.html', context)
+    if group_images_paths:
+        # Proceed to label the next image
+        image_path = group_images_paths[0]
+        fs = FileSystemStorage()
+        image_url = fs.url(image_path)
+        context = {'image_path': image_path, 'image_url': image_url}
+        return render(request, 'processor/label_image.html', context)
+    else:
+        # If no images are left to label, redirect to the completion view
+        return HttpResponseRedirect(reverse('all_labeled'))
+
 
 
 def download_labeled_data_view(request):
     # Path to the CSV file
     csv_file_path = os.path.join(settings.MEDIA_ROOT, 'labeled_images.csv')
-
-    # Check if the CSV file exists and delete it
-    if os.path.isfile(csv_file_path):
-        os.remove(csv_file_path)
-        print(f"Existing CSV file deleted: {csv_file_path}")
-
+    
+    print("\n")
+    print("csv_file_path: ", csv_file_path)
+    print("\n")
+    
     # Gather all labeled images
     labeled_images = LabeledImage.objects.all()
 
@@ -117,6 +126,7 @@ def download_labeled_data_view(request):
     response['Content-Disposition'] = 'attachment; filename="labeled_images.csv"'
 
     return response
+
 
 
 def all_labeled_view(request):
