@@ -13,8 +13,11 @@
             <button type="submit" name="label" value="Yes">Yes</button>
             <button type="submit" name="label" value="No">No</button>
         </form>
+        <p>Images Analyzed: {{ analyzed_images }} / {{ total_images }}</p>
+        <p>Remaining Images: {{ remaining_images }}</p>
     {% else %}
         <p>No more images to label.</p>
+        <button class = "csv-button"><a href="{% url 'all_labeled' %}">Download CSV</a></button>
     {% endif %}
 </body>
 </html>

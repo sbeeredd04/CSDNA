@@ -64,84 +64,70 @@ def download_zip(request, zip_file):
     raise Http404
 
 
+from django.shortcuts import render, HttpResponseRedirect
+from django.conf import settings
+from django.urls import reverse
+import os
+import csv
+
 def label_image_view(request):
-    # Define the path for the CSV file where labels are stored
     csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
     
-    # Ensure the CSV file exists and has the appropriate headers
+    # Make sure the CSV file exists with the appropriate headers
     if not os.path.exists(csv_file_path):
         with open(csv_file_path, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['Image', 'Label'])  # Header
+            writer.writerow(['Image', 'Label'])  # Write the header
 
-    # Load the list of images
+    # Load the list of image filenames from the CSV file to determine which have been labeled
+    with open(csv_file_path, 'r', newline='') as file:
+        labeled_images = [row[0] for row in csv.reader(file)][1:]  # Exclude header
+
+    # Load and sort the list of image files in the media directory
     images = [img for img in os.listdir(settings.MEDIA_ROOT) if img.endswith(('jpg', 'jpeg', 'png'))]
-    
-    # Sort the images to ensure consistent order
     images.sort()
 
-    # Attempt to retrieve the current image index from the session
-    current_index = request.session.get('current_image_index', 0)
+    # Determine the next image to label
+    remaining_images = [img for img in images if img not in labeled_images]
+    current_image = remaining_images[0] if remaining_images else None
 
-    # If the form has been submitted
-    if request.method == 'POST':
+    if request.method == 'POST' and current_image:
         label = request.POST.get('label', 'No')
-        
         # Write the label to the CSV file
         with open(csv_file_path, 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([images[current_index], label])
+            writer.writerow([current_image, label])
 
-        # Move to the next image
-        current_index += 1
-        request.session['current_image_index'] = current_index
+        # Redirect to refresh and move to the next image
+        return HttpResponseRedirect(reverse('label-image'))
 
-        # If all images have been labeled, redirect to a completion view
-        if current_index >= len(images):
-            return HttpResponseRedirect(reverse('all_labeled'))
+    context = {
+        'image_path': current_image,
+        'image_url': os.path.join(settings.MEDIA_URL, current_image) if current_image else None,
+        'remaining_images': len(remaining_images),
+        'total_images': len(images),
+        'analyzed_images': len(images) - len(remaining_images),
+    }
 
-    # If there are still images to be labeled
-    if current_index < len(images):
-        image_path = images[current_index]
-        context = {
-            'image_path': image_path,
-            'image_url': os.path.join(settings.MEDIA_URL, image_path)
-        }
-        return render(request, 'processor/label_image.html', context)
-
-    # If no more images to label, redirect to completion
-    return HttpResponseRedirect(reverse('all_labeled'))
-
-
+    return render(request, 'processor/label_image.html', context)
 
 
 
 def download_labeled_data_view(request):
-    # Path to the CSV file you want to save
-    csv_file_path = os.path.join(settings.MEDIA_ROOT, 'labeled_images.csv')
+    # Specify the path to the CSV file that contains the labels
+    csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
     
-    # Make sure the directory exists
-    os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
+    # Check if the file exists before attempting to download
+    if os.path.exists(csv_file_path):
+        with open(csv_file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(csv_file_path)}"'
+            return response
+    else:
+        # Handle the case where the file does not exist
+        response = HttpResponse("No labeled data available for download.", content_type='text/plain')
+        return response
 
-    # Gather all labeled images
-    labeled_images = LabeledImage.objects.all()
-
-    # Open the file to write or overwrite as needed ('w' mode)
-    with open(csv_file_path, 'w', newline='') as csvfile:
-        # CSV writer object
-        csvwriter = csv.writer(csvfile)
-        # Write the header
-        csvwriter.writerow(["image_path", "label"])
-        # Write each labeled image data
-        for image in labeled_images:
-            csvwriter.writerow([image.image_path, image.label])
-    
-    # After saving the file, you can read it back to send in the response
-    with open(csv_file_path, 'rb') as csvfile:
-        response = HttpResponse(csvfile.read(), content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(csv_file_path)}"'
-
-    return response
 
 
 

@@ -84,5 +84,8 @@ def process_images(input_path, group_radius=50, min_dots=100, threshold=60, circ
             zip_file.write(os.path.join(settings.MEDIA_ROOT, path), os.path.basename(path))
     
     print(f"{len(image_paths)} images processed using {'GPU' if use_gpu else 'CPU'}")
+    
+    #printing the total number of individual group images
+    print(f"Total number of individual group images: {len(all_groups_paths)}")
 
     return full_images_zip_filename, groups_zip_filename, full_image_path, all_groups_paths
