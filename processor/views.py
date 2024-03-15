@@ -73,18 +73,20 @@ import csv
 def label_image_view(request):
     csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
     
-    # Make sure the CSV file exists with the appropriate headers
+    # Ensure the CSV file exists with the appropriate headers
     if not os.path.exists(csv_file_path):
         with open(csv_file_path, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['Image', 'Label'])  # Write the header
 
-    # Load the list of image filenames from the CSV file to determine which have been labeled
+    # Load the list of image filenames and their labels from the CSV file
     with open(csv_file_path, 'r', newline='') as file:
-        labeled_images = [row[0] for row in csv.reader(file)][1:]  # Exclude header
+        reader = csv.reader(file)
+        labeled_images_data = list(reader)
+        labeled_images = [row[0] for row in labeled_images_data][1:]  # Exclude header
 
-    # Load and sort the list of image files in the media directory
-    images = [img for img in os.listdir(settings.MEDIA_ROOT) if img.endswith(('jpg', 'jpeg', 'png'))]
+    # Load and sort the list of image files in the media directory and only look for /media/group_{i}.png
+    images = [f for f in os.listdir(os.path.join(settings.MEDIA_ROOT)) if f.startswith('group_') and f.endswith('.png')]
     images.sort()
 
     # Determine the next image to label
@@ -101,20 +103,21 @@ def label_image_view(request):
         # Redirect to refresh and move to the next image
         return HttpResponseRedirect(reverse('label-image'))
 
+    analyzed_images = len(images) - len(remaining_images)
+    total_images = len(images)
+    progress = (analyzed_images / total_images) * 100 if total_images > 0 else 0
+
     context = {
         'image_path': current_image,
         'image_url': os.path.join(settings.MEDIA_URL, current_image) if current_image else None,
         'remaining_images': len(remaining_images),
         'total_images': len(images),
-        'analyzed_images': len(images) - len(remaining_images),
+        'analyzed_images': analyzed_images,
+        'progress': progress,
     }
-    
-    #sorting the csv file according to alphanumeric series
-    with open(csv_file_path, 'r', newline='') as file:
-        reader = csv.reader(file)
-        sorted_list = sorted(reader, key=lambda row: row[0])
 
     return render(request, 'processor/label_image.html', context)
+
 
 
 

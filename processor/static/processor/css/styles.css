@@ -249,6 +249,7 @@ input[name="circle_width"] {
 
 
 .results-page-container {
+    position: relative;
     background-color: rgba(0, 0, 0, 0.90);
     border-radius: 10px;
     padding: 40px;
@@ -421,9 +422,9 @@ input[name="circle_width"] {
     color: #ffffff;
 }
 
-.next-button {
-    top: 0;
-    right: 0;
+.btn-next {
+    top: 0 !important;
+    right: 0 !important;
     position: absolute;
     margin-top: 20px;
     margin-right: 20px;
@@ -441,12 +442,13 @@ input[name="circle_width"] {
     background: linear-gradient(90deg, #ca6abd, #55A8E6);
 }
 
-.next-button:hover {
+.btn-next:hover {
     box-shadow: 0 0 25px #55A8E6,
                 0 0 50px #ca6abd;
 }
 
-.next-button a {
+.btn-next a {
     text-decoration: none;
     color: #ffffff;
 }
+

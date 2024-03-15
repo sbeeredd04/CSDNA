@@ -1,17 +1,114 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Label Image</title>
+    <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
+    <style>
+        .label-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            background-image: url('{% static "processor/images/backgroundimagecsdna.jpg" %}');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .label-page-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.80);
+            padding: 40px;
+            border-radius: 10px;
+            margin: 20px;
+            height: auto;
+            width: 80%;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .header p {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+        }
+
+        .header img {
+            margin-top: 20px;
+            width: 25%;
+            height: auto;
+            margin-bottom: 2rem;
+        }
+
+        .yes-no-buttons {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 5%;
+        }
+
+        .yes-button, .no-button {
+            padding: 20px;
+            width: 25%;
+            font-size: 1.5rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin: 0 10% 0 10%;
+        }
+
+        .yes-button {
+            background-color: green;
+            color: white;
+        }
+
+        .no-button {
+            background-color: red;
+            color: white;
+        }
+
+        .progress-bar {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            background-color: transparent;
+            border-radius: 5px;
+            margin: 10px 0;
+            padding-right: 10px;
+            margin-top: 10%;
+        }
+
+        .progress-bar-fill {
+            height: 20px;
+            background-color: #4caf50;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .progress-bar p {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.addEventListener('keydown', function (e) {
-                // Check if the pressed key is '1' or '0'
                 if (e.key === '1') {
-                    // Simulate clicking the 'Yes' button
                     document.getElementById('yes-button').click();
                 } else if (e.key === '0') {
-                    // Simulate clicking the 'No' button
                     document.getElementById('no-button').click();
                 }
             });
@@ -19,20 +116,34 @@
     </script>
 </head>
 <body>
-    {% if image_url %}
-        <img src="{{ image_url }}" alt="Image to Label">
-        <form method="POST" id="label-form">
-            {% csrf_token %}
-            <input type="hidden" name="image_path" value="{{ image_path }}">
-            <!-- Add IDs to the buttons for the JavaScript to target -->
-            <button type="submit" name="label" value="1" id="yes-button">Yes</button>
-            <button type="submit" name="label" value="0" id="no-button">No</button>
-        </form>
-        <p>Images Analyzed: {{ analyzed_images }} / {{ total_images }}</p>
-        <p>Remaining Images: {{ remaining_images }}</p>
-    {% else %}
-        <p>No more images to label.</p>
-        <a href="{% url 'all_labeled' %}"><button class="csv-button">Download CSV</button></a>
-    {% endif %}
+    <div class="label-page">
+        <div class="label-page-container">
+            <button class = "back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
+            <div class="header">
+                <h1><span class="cs">Label</span> <span class="DNA">Image</span></h1>
+                <p>Label the image as either containing csDNA origami or not (0 = NO, 1 = YES)</p>
+                {% if image_url %}
+                    <img src="{{ image_url }}" alt="Image to Label">
+                    <form method="POST" id="label-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="image_path" value="{{ image_path }}">
+                        <div class="yes-no-buttons">
+                            <button type="submit" name="label" value="1" id="yes-button" class="yes-button">Yes</button>
+                            <button type="submit" name="label" value="0" id="no-button" class="no-button">No</button>
+                        </div>
+                    </form>
+
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" style="width: {{ progress }}%;"></div>
+                        <p>{{ analyzed_images }} / {{ total_images }}</p>
+                    </div>
+
+                {% else %}
+                    <p>No more images to label.</p>
+                    <a href="{% url 'all_labeled' %}"><button class="csv-button">Download CSV</button></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>
