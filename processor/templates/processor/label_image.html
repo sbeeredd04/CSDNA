@@ -135,6 +135,16 @@
             text-decoration: none;
         }
         
+        .label-page-container .back-button  {
+            top: 30%;
+            left: 15%;
+        }
+
+        .label-page-container .btn-next {
+            top: 30% !important;
+            right: 15% !important;
+        }
+
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -151,7 +161,10 @@
 <body>
     <div class="label-page">
         <div class="label-page-container">
+
             <button class = "back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
+            <button class = "btn-next"><a href="{% url 'all_labeled' %}">Next -></a></button>
+
             <div class="header">
                 <h1><span class="cs">Label</span> <span class="DNA">Image</span></h1>
                 <p>Label the image as either containing csDNA origami or not (0 = NO, 1 = YES)</p>

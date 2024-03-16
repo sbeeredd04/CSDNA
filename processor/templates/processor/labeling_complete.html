@@ -102,6 +102,9 @@
 <body>
     <div class = "complete-page">
         <div class = "complete-page-container">
+
+            <button class = "back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
+
             <div class = "header1">
                     <h1><span class = "cs">Labeling</span><span class = "DNA"> Complete</span></h1>
                     <p>All images have been labeled. You can download the dataset now.</p>
@@ -112,6 +115,8 @@
                 <a href="{% url 'download-labeled-group-images' %}" class ="csDNA-button">csDNA Images</a>
                 <a href="{% url 'download-labeled-data' %}" class = "csDNA">Download Dataset</a>
             </div>
+
+
 
 
         </div>
