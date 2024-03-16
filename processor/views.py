@@ -162,3 +162,32 @@ def clear_media_directory():
     else:
         print(f"Media directory is not deleted: {media_dir_path}")
         print("\n")
+        
+# views.py
+
+def download_labeled_group_images_view(request):
+    csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
+    
+    if os.path.exists(csv_file_path):
+        # Read the CSV and filter out the rows where the label is '1'
+        with open(csv_file_path, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            labeled_images = [row['Image'] for row in reader if row['Label'] == '1']
+
+        # Create a zip file with all the images labeled '1'
+        zip_filename = "labeled_group_images.zip"
+        zip_file_path = os.path.join(settings.MEDIA_ROOT, zip_filename)
+        
+        with ZipFile(zip_file_path, 'w') as zip_file:
+            for image_filename in labeled_images:
+                image_path = os.path.join(settings.MEDIA_ROOT, image_filename)
+                if os.path.exists(image_path):
+                    zip_file.write(image_path, arcname=image_filename)
+        
+        # Serve the zip file
+        with open(zip_file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='application/zip')
+            response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+            return response
+
+    raise Http404("No labeled group images available for download.")

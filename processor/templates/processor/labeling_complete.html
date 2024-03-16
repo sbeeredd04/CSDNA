@@ -68,6 +68,34 @@
         .DNA {
             color: #55A8E6;
         }
+
+        .link-containers {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            padding: 20px;
+            margin: 20px;
+        }
+
+
+        .link-containers a { 
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+        }
+
+        .link-containers a:hover {
+            background-color: #0056b3;
+        }
+
+
     </style>        
 
 </head>
@@ -77,8 +105,15 @@
             <div class = "header1">
                     <h1><span class = "cs">Labeling</span><span class = "DNA"> Complete</span></h1>
                     <p>All images have been labeled. You can download the dataset now.</p>
-                    <button class = "csv-dataset-button"><a href="{% url 'download-labeled-data' %}">Download Dataset</a></button>
             </div>
+
+            <div class = "link-containers">
+                <!-- Add this in your template where you want to provide the download option -->
+                <a href="{% url 'download-labeled-group-images' %}" class ="csDNA-button">csDNA Images</a>
+                <a href="{% url 'download-labeled-data' %}" class = "csDNA">Download Dataset</a>
+            </div>
+
+
         </div>
     </div>
 </body>
