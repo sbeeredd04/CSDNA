@@ -7,10 +7,79 @@
     <title>Labeling Complete</title>
     <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
 
+    <style>
+        .complete-page { 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('/static/processor/images/backgroundimagecsdna.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .complete-page-container {
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.90);
+            border-radius: 10px;
+            padding: 40px;
+            margin: 20px;
+            width: 80%;
+            color: #fff;
+            text-align: center;
+            margin-top: 7.5%;
+        }
+        
+        .complete-page-container .header1 h1 {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        
+        .complete-page-container .header1 p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .csv-dataset-button { 
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-right: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .csv-dataset-button:hover {
+            background-color: #0056b3;
+        }
+        
+        .csv-dataset-button a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .cs { 
+            color: #ca6abd;
+        }
+        
+        .DNA {
+            color: #55A8E6;
+        }
+    </style>        
+
 </head>
 <body>
-    <h1>Labeling Complete</h1>
-    <p>All images have been labeled. You can download the dataset now.</p>
-    <a href="{% url 'download-labeled-data' %}">Download Dataset</a>
+    <div class = "complete-page">
+        <div class = "complete-page-container">
+            <div class = "header1">
+                    <h1><span class = "cs">Labeling</span><span class = "DNA"> Complete</span></h1>
+                    <p>All images have been labeled. You can download the dataset now.</p>
+                    <button class = "csv-dataset-button"><a href="{% url 'download-labeled-data' %}">Download Dataset</a></button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

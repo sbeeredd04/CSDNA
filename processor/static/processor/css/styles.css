@@ -452,3 +452,11 @@ input[name="circle_width"] {
     color: #ffffff;
 }
 
+.label-page-container .header a {
+    display: inline-block;
+    background-color: #ec7cdd;
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+}

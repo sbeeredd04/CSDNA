@@ -102,6 +102,39 @@
             margin-left: 10px;
             font-weight: bold;
         }
+
+        .csv-button {
+            align-items: center;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #ec7cdd;
+            width: 200px !important;
+            height: 50px !important;
+        }
+        
+        .csv-button a {
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff;
+            border-radius: 5px;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin-top: 5px;
+        }
+        
+        .csv-button a:hover {
+            background-color: #0056b3;
+        }
+
+        .label-page-container .header a {
+            display: inline-block;
+            background-color: #ec7cdd;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -140,7 +173,7 @@
 
                 {% else %}
                     <p>No more images to label.</p>
-                    <a href="{% url 'all_labeled' %}"><button class="csv-button">Download CSV</button></a>
+                    <button class="csv-button"><a href="{% url 'all_labeled' %}">Download CSV</a></button>
                 {% endif %}
             </div>
         </div>

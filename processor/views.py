@@ -142,6 +142,8 @@ def download_labeled_data_view(request):
 def all_labeled_view(request):
     return render(request, 'processor/labeling_complete.html')
 
+def image_result_view(request):
+    return render(request, 'processor/image_result.html')
 
 def clear_media_directory():
     # Path to the media directory
