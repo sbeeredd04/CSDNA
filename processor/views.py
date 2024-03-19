@@ -14,6 +14,10 @@ from django.urls import reverse
 import shutil
 from django.core.files.storage import FileSystemStorage
 import csv
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 
 def image_upload_view(request):
     
@@ -191,3 +195,121 @@ def download_labeled_group_images_view(request):
             return response
 
     raise Http404("No labeled group images available for download.")
+
+
+#method to get the number of images with label 1 vs total images and displaying the piechart
+def labeled_images_piechart(request):
+    csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
+    
+    if os.path.exists(csv_file_path):
+        with open(csv_file_path, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            labeled_images = [row['Image'] for row in reader if row['Label'] == '1']
+            total_images = len([row['Image'] for row in reader])
+            remaining_images = total_images - len(labeled_images)
+            print(f"Total images: {total_images}")
+            print(f"Labeled images: {len(labeled_images)}")
+            print(f"Remaining images: {remaining_images}")
+            print("\n")
+            
+            #pie chart
+            import matplotlib.pyplot as plt
+            labels = 'Labeled Images', 'Remaining Images'
+            sizes = [len(labeled_images), remaining_images]
+            colors = ['gold', 'yellowgreen']
+            explode = (0.1, 0)  # explode 1st slice
+            plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
+            plt.axis('equal')
+            plt.savefig('media/pie_chart.png')
+            plt.show()
+            
+            return render(request, 'processor/piechart.html')
+    else:
+        raise Http404("No labeled group images available for download.")
+    
+
+import matplotlib.pyplot as plt
+import csv
+import os
+from django.http import HttpResponse
+from django.conf import settings
+from io import BytesIO
+
+def generate_pie_chart(request):
+    csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
+    
+    if os.path.exists(csv_file_path):
+        with open(csv_file_path, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            data = list(reader)
+            total_images = len(data)
+            csdna_images = sum(1 for row in data if row['Label'] == '1')
+            other_images = total_images - csdna_images
+            
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+            
+            
+            # Set the style for the plots
+            plt.style.use('dark_background')
+            plt.rcParams.update({
+                "text.color": "white",
+                "axes.edgecolor": "white",
+                "axes.labelcolor": "white",
+                "xtick.color": "white",
+                "ytick.color": "white",
+                "axes.facecolor": "none",  # Transparent face
+                "figure.facecolor": "none"  # Transparent figure
+            })
+            
+            # Data for pie chart
+            pie_labels = ['CSDNA', 'Others']
+            pie_sizes = [csdna_images, other_images]
+            pie_colors = ['#ca6abd','#55A8E6']
+            pie_explode = (0.1, 0)  # explode 1st slice
+            
+            # Data for histogram
+            hist_labels = ['CSDNA', 'Others']
+            hist_sizes = [csdna_images, other_images]
+            hist_colors = ['#ca6abd','#55A8E6']
+
+            # Creating subplots
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+
+            # Plotting pie chart
+            ax1.pie(pie_sizes, explode=pie_explode, labels=pie_labels, colors=pie_colors, autopct=lambda p: f'{p:.1f}%\n({p*sum(pie_sizes)/100 :.0f})', shadow=True, startangle=90, textprops={'color':'white'})
+            ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+
+            # Plotting histogram
+            ax2.bar(hist_labels, hist_sizes, color=hist_colors)
+
+            # Adding the count above the bars in histogram
+            for i in range(len(hist_sizes)):
+                ax2.text(i, hist_sizes[i] + max(hist_sizes)*0.01, str(hist_sizes[i]), ha='center', color='white')
+
+            # Setting labels for histogram
+            ax2.set_ylabel('Number of Images')
+            ax2.set_title('Distribution of Images')
+            
+            padding_amount = 2
+            
+            # Set y limit for padding above the bars
+            ax2.set_ylim(0, max(hist_sizes) + padding_amount)
+            #set x limit for padding on the sides
+            ax2.set_xlim(-0.5, len(hist_labels)-1 + 0.5)
+
+            
+            plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, wspace=0.8, hspace=0.8)
+            
+            # Save it to a temporary buffer.
+            buf = BytesIO()
+            plt.savefig(buf, format='png', transparent=True)  # Set transparent to True here
+            # Embed the result in the html output.
+            data = buf.getvalue()
+
+            plt.close(fig)  # Close the figure after saving to buffer
+
+            # Send buffer in a http response the the browser with the mime type image/png set
+            return HttpResponse(data, content_type='image/png')
+    else:
+        return HttpResponse("No data available to generate charts.", content_type='text/plain')

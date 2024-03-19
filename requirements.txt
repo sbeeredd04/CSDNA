@@ -2,3 +2,4 @@ django
 Pillow
 numpy
 scikit-learn
+matplotlib
