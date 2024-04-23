@@ -5,7 +5,7 @@ from scipy.spatial import ConvexHull
 import math
 
 # Load the image
-image_path = 'Testing code\Bordering Test\Clean_csDNA\group_37.png'  # Replace with your image path
+image_path = 'Testing code\Bordering Test\Clean_csDNA\group_110.png'  # Replace with your image path
 image = cv2.imread(image_path)
 
 # Convert to grayscale
@@ -94,7 +94,7 @@ angle_of_rotation = np.arctan2(dy, dx)
 
 # Compute the angle to horizontal
 angle_to_horizontal = np.degrees(angle_of_rotation)
-print("degrees:" + str(angle_to_horizontal))
+
 # If the angle is negative, we rotate counter-clockwise by its absolute value
 rotation_angle = 180-angle_to_horizontal if angle_to_horizontal < 0 else 360-angle_to_horizontal
 
@@ -113,6 +113,43 @@ rotated_centers = np.vstack([np.dot(rotation_matrix, np.array([*center, 1])) for
 
 # Recalculate the hull for visual consistency in plot, though it's not necessary for rotation proof
 rotated_hull = ConvexHull(rotated_centers)
+
+
+
+
+
+def point_below_line(point, line_start, line_end):
+    """ Returns True if the point is below the line segment formed by line_start and line_end """
+    # Calculate line equation coefficients
+    a = line_end[1] - line_start[1]  # y2 - y1
+    b = line_start[0] - line_end[0]  # x1 - x2
+    c = line_end[0] * line_start[1] - line_start[0] * line_end[1]  # x2*y1 - x1*y2
+
+    # Substitute point into line equation to determine position relative to line
+    # Point is below line if result is less than 0 (assuming y-axis points down in image coordinates)
+    return (a * point[0] + b * point[1] + c) > 0
+
+# Assuming 'rotated_centers' and 'longest_edge' from previous steps
+exclude_points = set(longest_edge)
+points_below_line = False
+
+for i, point in enumerate(rotated_centers):
+    if i not in exclude_points:
+        if point_below_line(point, rotated_centers[longest_edge[0]], rotated_centers[longest_edge[1]]):
+            points_below_line = True
+            break
+    
+# Rotate the image by 180 degrees if any point is below the line
+if points_below_line:
+    rotation_matrix_180 = cv2.getRotationMatrix2D(rotation_center, 180, 1.0)
+    rotated_image = cv2.warpAffine(rotated_image, rotation_matrix_180, (w, h))
+
+    # Apply this rotation to each center point
+    rotated_centers = np.vstack([np.dot(rotation_matrix_180, np.array([*center, 1])) for center in rotated_centers])
+
+    # Recalculate the hull for visual consistency in plot, though it's not necessary for rotation proof
+    rotated_hull = ConvexHull(rotated_centers)
+
 
 # Plot the rotated image
 plt.figure(figsize=(6, 6))
