@@ -3,3 +3,5 @@ Pillow
 numpy
 scikit-learn
 matplotlib
+opencv-python-headless
+plotly
