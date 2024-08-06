@@ -5,3 +5,4 @@ scikit-learn
 matplotlib
 opencv-python-headless
 plotly
+h5py
