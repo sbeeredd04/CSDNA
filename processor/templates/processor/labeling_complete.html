@@ -78,7 +78,6 @@
             margin: 20px;
         }
 
-
         .link-containers a { 
             display: inline-block;
             background-color: #007bff;
@@ -95,33 +94,28 @@
             background-color: #0056b3;
         }
 
-
     </style>        
 
 </head>
 <body>
-    <div class = "complete-page">
-        <div class = "complete-page-container">
+    <div class="complete-page">
+        <div class="complete-page-container">
 
-            <button class = "back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
+            <button class="back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
 
-            <div class = "header1">
-                    <h1><span class = "cs">Labeling</span><span class = "DNA"> Complete</span></h1>
-                    <p>All images have been labeled. You can download the dataset now.</p>
+            <div class="header1">
+                <h1><span class="cs">Labeling</span><span class="DNA"> Complete</span></h1>
+                <p>All images have been labeled. You can download the dataset now.</p>
             </div>
 
-            <div class = "link-containers">
-                <!-- Add this in your template where you want to provide the download option -->
-                <a href="{% url 'download-labeled-group-images' %}" class ="csDNA-button">csDNA Images</a>
-                <a href="{% url 'download-labeled-data' %}" class = "csDNA">Download Dataset</a>
+            <div class="link-containers">
+                <!-- Provide the download option for the labeled images -->
+                <a href="{% url 'download-labeled-group-images' %}" class="csDNA-button">csDNA Images</a>
+                <a href="{% url 'download-labeled-data' %}" class="csDNA">Download Dataset</a>
             </div>
 
-            <!-- pie chart as image -->
-            <img src ="{% url 'generate-pie-chart' %}" alt="Pie Chart" style="width: 60%; height: auto;">
-
-
-
-
+            <!-- Pie chart and histogram as an image -->
+            <img src="{% url 'generate-pie-chart' %}" alt="Category Distribution" style="width: 60%; height: auto;">
 
         </div>
     </div>

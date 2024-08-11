@@ -9,6 +9,7 @@ class ImageProcessingOptionsForm(forms.Form):
     threshold = forms.IntegerField(min_value=0, initial=60)
     circle_color = forms.CharField(initial='green')
     circle_width = forms.IntegerField(min_value=1, initial=8)
+    num_categories = forms.IntegerField(label='Number of Categories', min_value=1, initial=1) 
 
 class ImageUploadForm(forms.ModelForm):
     class Meta:

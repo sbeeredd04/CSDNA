@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +8,6 @@
     <title>Label Image</title>
     <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
     <style>
-        /* Include the updated CSS here */
         .label-page-container {
             display: flex;
             flex-direction: column;
@@ -53,87 +53,12 @@
             color: #32CD32;
             margin: 0 20px;
         }
-
-        .add-category-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: background-color 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .add-category-button:hover {
-            background-color: #0056b3;
-        }
     </style>
     <script>
-        /* Include the AJAX script here */
-        document.addEventListener('DOMContentLoaded', function () {
-            const categoryList = document.getElementById('category-list');
-            const addCategoryButton = document.getElementById('add-category-button');
-            let categoryCount = 0;
-            const categoryKeys = "0123456789abcdefghijklmnopqrstuvwxyz".split('');
-
-            addCategoryButton.addEventListener('click', function () {
-                if (categoryCount < categoryKeys.length) {
-                    const categoryKey = categoryKeys[categoryCount];
-                    const categoryDiv = document.createElement('div');
-                    categoryDiv.className = 'category-item';
-                    categoryDiv.innerHTML = `
-                        <span class="category-label">Category ${categoryKey.toUpperCase()} (Key: ${categoryKey.toUpperCase()})</span>
-                        <button class="category-button decrement" data-key="${categoryKey}">-</button>
-                        <span id="counter-${categoryKey}" class="category-counter">0</span>
-                        <button class="category-button increment" data-key="${categoryKey}">+</button>
-                    `;
-                    categoryList.appendChild(categoryDiv);
-                    categoryCount++;
-                } else {
-                    alert('Maximum categories reached.');
-                }
-            });
-
-            categoryList.addEventListener('click', function (e) {
-                if (e.target.classList.contains('increment') || e.target.classList.contains('decrement')) {
-                    const key = e.target.getAttribute('data-key');
-                    const counterElement = document.getElementById(`counter-${key}`);
-                    let currentCount = parseInt(counterElement.textContent);
-                    if (e.target.classList.contains('increment')) {
-                        currentCount++;
-                    } else if (e.target.classList.contains('decrement')) {
-                        currentCount--;
-                        if (currentCount < 0) currentCount = 0;
-                    }
-                    counterElement.textContent = currentCount;
-
-                    // Send AJAX request to update count in the backend
-                    fetch('/update-category-count/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ category: key, count: currentCount })
-                    }).then(response => {
-                        if (!response.ok) {
-                            console.error('Failed to update count.');
-                        }
-                    });
-                }
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (categoryKeys.includes(e.key)) {
-                    const incrementButton = document.querySelector(`.increment[data-key="${e.key}"]`);
-                    if (incrementButton) {
-                        incrementButton.click();
-                    }
-                }
-            });
-        });
+        function submitLabel(labelValue) {
+            document.getElementById('label').value = labelValue;
+            document.getElementById('label-form').submit();
+        }
     </script>
 </head>
 <body>
@@ -144,18 +69,24 @@
 
             <div class="header">
                 <h1><span class="cs">Label</span> <span class="DNA">Image</span></h1>
-                <p>Label the image by selecting or adding categories. Use corresponding keys (0-9, a-z) to label images.</p>
+                <p>Label the image by selecting a category. Use corresponding keys (1 to {{ num_categories }}) to label images.</p>
                 {% if image_url %}
                     <img src="{{ image_url }}" alt="Image to Label">
                     <form method="POST" id="label-form">
                         {% csrf_token %}
                         <input type="hidden" name="image_path" value="{{ image_path }}">
-
-                        <div id="category-list" class="yes-no-buttons"></div>
-
-                        <button type="button" id="add-category-button" class="add-category-button">Add Category</button>
-                    </form>
-
+                        <input type="hidden" id="label" name="label" value="">
+                    
+                        <div id="category-list" class="yes-no-buttons">
+                            {% for i in categories_range %}
+                                <div class="category-item">
+                                    <span class="category-label">Category {{ i }}</span>
+                                    <button type="button" class="category-button increment" data-key="{{ i }}" onclick="submitLabel('{{ i }}')">+</button>
+                                    <span id="counter-{{ i }}" class="category-counter">{{ category_counts|get_item:i }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>                                                         
+                    </form>                                        
                     <div class="progress-bar">
                         <div class="progress-bar-fill" style="width: {{ progress }}%;"></div>
                         <p>{{ analyzed_images }} / {{ total_images }}</p>

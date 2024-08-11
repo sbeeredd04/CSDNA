@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <title>Upload and Process Image</title>
     <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
-    
 </head>
 <body>
     <div class="landing-page">
@@ -51,7 +50,12 @@
                         {{ options_form.circle_width.label_tag }}
                         {{ options_form.circle_width }}
                     </div>
+                    <div class="form-group">
+                        {{ options_form.num_categories.label_tag }} 
+                        {{ options_form.num_categories }}
+                    </div>
                 </div>
+                
                 <button class="shadow__btn" type="submit">Process Image</button>
             </form>
 

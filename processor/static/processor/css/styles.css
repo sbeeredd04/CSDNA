@@ -127,7 +127,9 @@ input[name="threshold"] {
 /* Style select input by name */
 select[name="circle_color"],
 input[name="circle_color"],
-input[name="circle_width"] {
+input[name="circle_width"],
+select[name="num_categories"],
+input[name="num_categories"] {
     width: 100%;
     padding: 10px;
     margin: 8px 0;
