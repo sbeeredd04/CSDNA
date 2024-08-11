@@ -6,3 +6,4 @@ matplotlib
 opencv-python-headless
 plotly
 h5py
+seaborn
