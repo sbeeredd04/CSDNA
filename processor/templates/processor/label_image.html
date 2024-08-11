@@ -7,17 +7,7 @@
     <title>Label Image</title>
     <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
     <style>
-        .label-page {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100%;
-            background-image: url('{% static "processor/images/backgroundimagecsdna.jpg" %}');
-            background-size: cover;
-            background-position: center;
-        }
-
+        /* Include the updated CSS here */
         .label-page-container {
             display: flex;
             flex-direction: column;
@@ -25,134 +15,122 @@
             justify-content: center;
             text-align: center;
             color: #fff;
-            z-index: 1;
-            background-color: rgba(0, 0, 0, 0.80);
+            background-color: #2c2c3e;
             padding: 40px;
             border-radius: 10px;
-            margin: 20px;
-            height: auto;
             width: 80%;
         }
 
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .header p {
-            font-size: 1.5rem;
-            margin-bottom: 40px;
-        }
-
-        .header img {
-            margin-top: 20px;
-            width: 25%;
-            height: auto;
-            margin-bottom: 2rem;
-        }
-
-        .yes-no-buttons {
+        .category-item {
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            margin-top: 20px;
-            margin-bottom: 5%;
-        }
-
-        .yes-button, .no-button {
-            padding: 20px;
-            width: 25%;
-            font-size: 1.5rem;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            margin: 0 10% 0 10%;
-        }
-
-        .yes-button {
-            background-color: green;
-            color: white;
-        }
-
-        .no-button {
-            background-color: red;
-            color: white;
-        }
-
-        .progress-bar {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            background-color: transparent;
-            border-radius: 5px;
-            margin: 10px 0;
-            padding-right: 10px;
-            margin-top: 10%;
-        }
-
-        .progress-bar-fill {
-            height: 20px;
-            background-color: #4caf50;
-            border-radius: 5px;
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        .progress-bar p {
-            margin-left: 10px;
-            font-weight: bold;
-        }
-
-        .csv-button {
             align-items: center;
-            text-align: center;
-            margin-top: 20px;
-            background-color: #ec7cdd;
-            width: 200px !important;
-            height: 50px !important;
-        }
-        
-        .csv-button a {
-            display: inline-block;
-            background-color: #007bff;
-            color: #ffffff;
+            justify-content: space-between;
+            background-color: #1c1c2e;
+            padding: 10px 20px;
+            margin-bottom: 10px;
             border-radius: 5px;
-            text-decoration: none;
-            padding: 10px 15px;
-            margin-top: 5px;
+            width: 50%;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
-        .csv-button a:hover {
+
+        .category-button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .category-button:hover {
+            background-color: #003a7b;
+        }
+
+        .category-counter {
+            font-size: 2rem;
+            color: #32CD32;
+            margin: 0 20px;
+        }
+
+        .add-category-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .add-category-button:hover {
             background-color: #0056b3;
         }
-
-        .label-page-container .header a {
-            display: inline-block;
-            background-color: #ec7cdd;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        
-        .label-page-container .back-button  {
-            top: 30%;
-            left: 15%;
-        }
-
-        .label-page-container .btn-next {
-            top: 30% !important;
-            right: 15% !important;
-        }
-
     </style>
     <script>
+        /* Include the AJAX script here */
         document.addEventListener('DOMContentLoaded', function () {
+            const categoryList = document.getElementById('category-list');
+            const addCategoryButton = document.getElementById('add-category-button');
+            let categoryCount = 0;
+            const categoryKeys = "0123456789abcdefghijklmnopqrstuvwxyz".split('');
+
+            addCategoryButton.addEventListener('click', function () {
+                if (categoryCount < categoryKeys.length) {
+                    const categoryKey = categoryKeys[categoryCount];
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'category-item';
+                    categoryDiv.innerHTML = `
+                        <span class="category-label">Category ${categoryKey.toUpperCase()} (Key: ${categoryKey.toUpperCase()})</span>
+                        <button class="category-button decrement" data-key="${categoryKey}">-</button>
+                        <span id="counter-${categoryKey}" class="category-counter">0</span>
+                        <button class="category-button increment" data-key="${categoryKey}">+</button>
+                    `;
+                    categoryList.appendChild(categoryDiv);
+                    categoryCount++;
+                } else {
+                    alert('Maximum categories reached.');
+                }
+            });
+
+            categoryList.addEventListener('click', function (e) {
+                if (e.target.classList.contains('increment') || e.target.classList.contains('decrement')) {
+                    const key = e.target.getAttribute('data-key');
+                    const counterElement = document.getElementById(`counter-${key}`);
+                    let currentCount = parseInt(counterElement.textContent);
+                    if (e.target.classList.contains('increment')) {
+                        currentCount++;
+                    } else if (e.target.classList.contains('decrement')) {
+                        currentCount--;
+                        if (currentCount < 0) currentCount = 0;
+                    }
+                    counterElement.textContent = currentCount;
+
+                    // Send AJAX request to update count in the backend
+                    fetch('/update-category-count/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ category: key, count: currentCount })
+                    }).then(response => {
+                        if (!response.ok) {
+                            console.error('Failed to update count.');
+                        }
+                    });
+                }
+            });
+
             document.addEventListener('keydown', function (e) {
-                if (e.key === '1') {
-                    document.getElementById('yes-button').click();
-                } else if (e.key === '0') {
-                    document.getElementById('no-button').click();
+                if (categoryKeys.includes(e.key)) {
+                    const incrementButton = document.querySelector(`.increment[data-key="${e.key}"]`);
+                    if (incrementButton) {
+                        incrementButton.click();
+                    }
                 }
             });
         });
@@ -161,29 +139,27 @@
 <body>
     <div class="label-page">
         <div class="label-page-container">
-
-            <button class = "back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
-            <button class = "btn-next"><a href="{% url 'all_labeled' %}">Next -></a></button>
+            <button class="back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
+            <button class="btn-next"><a href="{% url 'all_labeled' %}">Next -></a></button>
 
             <div class="header">
                 <h1><span class="cs">Label</span> <span class="DNA">Image</span></h1>
-                <p>Label the image as either containing csDNA origami or not (0 = NO, 1 = YES)</p>
+                <p>Label the image by selecting or adding categories. Use corresponding keys (0-9, a-z) to label images.</p>
                 {% if image_url %}
                     <img src="{{ image_url }}" alt="Image to Label">
                     <form method="POST" id="label-form">
                         {% csrf_token %}
                         <input type="hidden" name="image_path" value="{{ image_path }}">
-                        <div class="yes-no-buttons">
-                            <button type="submit" name="label" value="1" id="yes-button" class="yes-button">Yes</button>
-                            <button type="submit" name="label" value="0" id="no-button" class="no-button">No</button>
-                        </div>
+
+                        <div id="category-list" class="yes-no-buttons"></div>
+
+                        <button type="button" id="add-category-button" class="add-category-button">Add Category</button>
                     </form>
 
                     <div class="progress-bar">
                         <div class="progress-bar-fill" style="width: {{ progress }}%;"></div>
                         <p>{{ analyzed_images }} / {{ total_images }}</p>
                     </div>
-
                 {% else %}
                     <p>No more images to label.</p>
                     <button class="csv-button"><a href="{% url 'all_labeled' %}">Download CSV</a></button>

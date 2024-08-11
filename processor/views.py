@@ -76,35 +76,29 @@ import csv
 
 def label_image_view(request):
     csv_file_path = os.path.join(settings.MEDIA_ROOT, 'image_labels.csv')
-    
-    # Ensure the CSV file exists with the appropriate headers
+
     if not os.path.exists(csv_file_path):
         with open(csv_file_path, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['Image', 'Label'])  # Write the header
+            writer.writerow(['Image', 'Label'])
 
-    # Load the list of image filenames and their labels from the CSV file
     with open(csv_file_path, 'r', newline='') as file:
         reader = csv.reader(file)
         labeled_images_data = list(reader)
-        labeled_images = [row[0] for row in labeled_images_data][1:]  # Exclude header
+        labeled_images = [row[0] for row in labeled_images_data][1:]
 
-    # Load and sort the list of image files in the media directory and only look for /media/group_{i}.png
     images = [f for f in os.listdir(os.path.join(settings.MEDIA_ROOT)) if f.startswith('group_') and f.endswith('.png')]
     images.sort()
 
-    # Determine the next image to label
     remaining_images = [img for img in images if img not in labeled_images]
     current_image = remaining_images[0] if remaining_images else None
 
     if request.method == 'POST' and current_image:
-        label = request.POST.get('label', '0')
-        # Write the label to the CSV file
+        label = request.POST.get('label', '')  # Get the dynamic label
         with open(csv_file_path, 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([current_image, label])
 
-        # Redirect to refresh and move to the next image
         return HttpResponseRedirect(reverse('label-image'))
 
     analyzed_images = len(images) - len(remaining_images)
@@ -121,6 +115,7 @@ def label_image_view(request):
     }
 
     return render(request, 'processor/label_image.html', context)
+
 
 
 
@@ -156,16 +151,6 @@ def clear_media_directory():
     # Remove the entire directory
     if os.path.isdir(media_dir_path):
         shutil.rmtree(media_dir_path)
-        print(f"Deleted the media directory: {media_dir_path}")
-        print("\n")
-        
-    #checking if media directory is deleted
-    if not os.path.isdir(media_dir_path):
-        print(f"Media directory is deleted: {media_dir_path}")
-        print("\n")
-    else:
-        print(f"Media directory is not deleted: {media_dir_path}")
-        print("\n")
         
 # views.py
 
@@ -313,3 +298,15 @@ def generate_pie_chart(request):
             return HttpResponse(data, content_type='image/png')
     else:
         return HttpResponse("No data available to generate charts.", content_type='text/plain')
+    
+    @csrf_exempt
+    def update_category_count(request):
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            category = data.get('category')
+            count = data.get('count')
+            # Update the count in your model or session, as needed
+            # Example:
+            # Category.objects.filter(key=category).update(count=count)
+            return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'failed'}, status=400)
