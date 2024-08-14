@@ -4,9 +4,10 @@ from .views import (
     label_image_view, 
     download_labeled_data_view, 
     all_labeled_view, 
-    image_result_view, 
-    download_labeled_group_images_view, 
-    generate_pie_chart, 
+    image_result_view,  
+    generate_pie_chart,
+    download_labeled_group_images_view,
+    download_images_by_category_view 
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('image-result/', image_result_view, name='image-result'),
     path('download-labeled-group-images/', download_labeled_group_images_view, name='download-labeled-group-images'),
     path('generate-pie-chart/', generate_pie_chart, name='generate-pie-chart'),
+    path('download-images-by-category/<int:category_label>/', download_images_by_category_view, name='download-images-by-category')
 ]

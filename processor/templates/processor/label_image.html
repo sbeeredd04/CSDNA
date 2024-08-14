@@ -8,17 +8,63 @@
     <title>Label Image</title>
     <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
     <style>
+        /* Inline styles specific to this page */
+        .label-page {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background-image: url('/static/processor/images/backgroundimagecsdna.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+        }
+
         .label-page-container {
+            background-color: rgba(0, 0, 0, 0.90);
+            border-radius: 10px;
+            padding: 40px;
+            width: 80%;
+            max-width: 1200px;
+            color: #fff;
+            text-align: center;
+            position: relative;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center; 
+            align-items: center;     
+            margin-bottom: 30px;
+            width: 100%;             
+            height: auto;
+        }
+        
+        .image-container img {
+            max-width: 600px;
+            width: 100%;         
+            height: auto;           
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+
+        .categories-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #fff;
-            background-color: #2c2c3e;
-            padding: 40px;
-            border-radius: 10px;
-            width: 80%;
+            width: 100%;
         }
 
         .category-item {
@@ -29,29 +75,119 @@
             padding: 10px 20px;
             margin-bottom: 10px;
             border-radius: 5px;
-            width: 50%;
+            width: 100%;
+            max-width: 500px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        .category-label {
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
         .category-button {
-            background-color: #0056b3;
+            background-color: #ca6abd;
             color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1rem;
             transition: background-color 0.3s ease;
+            margin: 0 10px;
         }
 
         .category-button:hover {
-            background-color: #003a7b;
+            background-color: #a25499;
         }
 
         .category-counter {
-            font-size: 2rem;
+            font-size: 1.2rem;
             color: #32CD32;
-            margin: 0 20px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            background-color: #3a3a4a;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 20px;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #55A8E6;
+            width: {{ progress }}%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .back-button, .btn-next {
+            position: absolute;
+            top: 20px;
+            padding: 10px 20px;
+            border: none;
+            font-size: 1rem;
+            color: #fff;
+            border-radius: 7px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: 0.3s;
+            background: linear-gradient(90deg, #ca6abd, #55A8E6);
+            cursor: pointer;
+        }
+
+        .back-button:hover, .btn-next:hover {
+            box-shadow: 0 0 15px #55A8E6,
+                        0 0 30px #ca6abd;
+        }
+
+        .back-button a, .btn-next a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .back-button {
+            left: 20px;
+        }
+
+        .btn-next {
+            right: 20px;
+        }
+
+        .csv-button {
+            background-color: #55A8E6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .csv-button:hover {
+            background-color: #3b7cac;
+        }
+
+        .csv-button a {
+            text-decoration: none;
+            color: #ffffff;
         }
     </style>
     <script>
@@ -64,38 +200,44 @@
 <body>
     <div class="label-page">
         <div class="label-page-container">
-            <button class="back-button"><a href="{% url 'image-result' %}"><- Back</a></button>
-            <button class="btn-next"><a href="{% url 'all_labeled' %}">Next -></a></button>
+            <button class="back-button"><a href="{% url 'image-result' %}">&larr; Back</a></button>
+            <button class="btn-next"><a href="{% url 'all_labeled' %}">Next &rarr;</a></button>
 
             <div class="header">
                 <h1><span class="cs">Label</span> <span class="DNA">Image</span></h1>
                 <p>Label the image by selecting a category. Use corresponding keys (1 to {{ num_categories }}) to label images.</p>
-                {% if image_url %}
-                    <img src="{{ image_url }}" alt="Image to Label">
-                    <form method="POST" id="label-form">
-                        {% csrf_token %}
-                        <input type="hidden" name="image_path" value="{{ image_path }}">
-                        <input type="hidden" id="label" name="label" value="">
-                    
-                        <div id="category-list" class="yes-no-buttons">
-                            {% for i in categories_range %}
-                                <div class="category-item">
-                                    <span class="category-label">Category {{ i }}</span>
-                                    <button type="button" class="category-button increment" data-key="{{ i }}" onclick="submitLabel('{{ i }}')">+</button>
-                                    <span id="counter-{{ i }}" class="category-counter">{{ category_counts|get_item:i }}</span>
-                                </div>
-                            {% endfor %}
-                        </div>                                                         
-                    </form>                                        
-                    <div class="progress-bar">
-                        <div class="progress-bar-fill" style="width: {{ progress }}%;"></div>
-                        <p>{{ analyzed_images }} / {{ total_images }}</p>
-                    </div>
-                {% else %}
-                    <p>No more images to label.</p>
-                    <button class="csv-button"><a href="{% url 'all_labeled' %}">Download CSV</a></button>
-                {% endif %}
             </div>
+
+            {% if image_url %}
+                <div class="image-container">
+                    <img src="{{ image_url }}" alt="Image to Label">
+                </div>
+
+                <form method="POST" id="label-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="image_path" value="{{ image_path }}">
+                    <input type="hidden" id="label" name="label" value="">
+
+                    <div class="categories-container">
+                        {% for i in categories_range %}
+                            <div class="category-item">
+                                <span class="category-label">Category {{ i }}</span>
+                                <button type="button" class="category-button" data-key="{{ i }}" onclick="submitLabel('{{ i }}')">+</button>
+                                <span id="counter-{{ i }}" class="category-counter">{{ category_counts|get_item:i }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </form>
+
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
+                    <!--progress text with to the closest integer percentage -->
+                    <div class="progress-text">{{ analyzed_images }} / {{ total_images }} ({{ progress | floatformat:0 }}%)</div>
+                </div>
+            {% else %}
+                <p>No more images to label.</p>
+                <button class="csv-button"><a href="{% url 'all_labeled' %}">Download CSV</a></button>
+            {% endif %}
         </div>
     </div>
 </body>
