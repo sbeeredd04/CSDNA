@@ -44,21 +44,20 @@
 
         .image-container {
             display: flex;
-            justify-content: center; 
-            align-items: center;     
+            justify-content: center;
+            align-items: center;
             margin-bottom: 30px;
-            width: 100%;             
+            width: 100%;
+            max-width: 600px;
             height: auto;
         }
-        
+
         .image-container img {
-            max-width: 600px;
-            width: 100%;         
-            height: auto;           
+            max-width: 100%;
+            height: auto;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
-        
 
         .categories-container {
             display: flex;
@@ -231,8 +230,7 @@
 
                 <div class="progress-bar">
                     <div class="progress-bar-fill"></div>
-                    <!--progress text with to the closest integer percentage -->
-                    <div class="progress-text">{{ analyzed_images }} / {{ total_images }} ({{ progress | floatformat:0 }}%)</div>
+                    <div class="progress-text">{{ analyzed_images }} / {{ total_images }} ({{ progress }}%)</div>
                 </div>
             {% else %}
                 <p>No more images to label.</p>

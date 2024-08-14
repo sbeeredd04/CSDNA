@@ -93,12 +93,9 @@
             </div>
 
             <!-- Provide the download option for each category -->
-            <!-- Inside labeling_complete.html -->
             <div class="category-buttons-container">
                 {% for i in categories_range %}
                     <a href="{% url 'download-images-by-category' i %}" class="category-button">Download Category {{ i }} Images</a>
-                {% empty %}
-                    <p>No categories available for download.</p> <!-- Debugging in the template -->
                 {% endfor %}
             </div>
 

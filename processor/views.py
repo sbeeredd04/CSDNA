@@ -301,12 +301,6 @@ def generate_pie_chart(request):
         category_sizes, 
         color=['#ca6abd', '#55A8E6', '#ffcc5c', '#96ceb4', '#ffeead']
     )
-    
-    #name of the categories on x-axis
-    ax2.set_xticklabels(category_labels, rotation=45, ha='right', color='white', fontsize=16)  # Increase text size here
-    
-    #naming the categories in the image
-    ax2.set_xticks(range(len(category_labels)))
 
     # Adding the count above the bars in the histogram
     for i in range(len(category_sizes)):
@@ -386,4 +380,3 @@ def download_images_by_category_view(request, category_label):
 
     print("CSV file not found or no images for the specified category.")  # Debugging
     raise Http404(f"No images found for category {category_label}.")
-
