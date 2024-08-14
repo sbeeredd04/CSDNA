@@ -275,8 +275,11 @@ from .models import Category
 def generate_pie_chart(request):
     # Fetch category counts from the database
     categories = Category.objects.all()
-    category_labels = [cat.key for cat in categories]
+    category_labels = [f"Category {cat.key}" for cat in categories]
     category_sizes = [cat.count for cat in categories]
+
+    # Define a new color palette with more colors
+    colors = ['#ca6abd', '#55A8E6', '#ffcc5c', '#96ceb4', '#ffeead', '#ff6f69', '#88d8b0', '#2e8b57', '#d8bfd8', '#4682b4']
 
     # Creating the plot
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
@@ -286,7 +289,7 @@ def generate_pie_chart(request):
         category_sizes, 
         labels=category_labels, 
         autopct=lambda p: f'{p:.1f}%\n({p*sum(category_sizes)/100 :.0f})',
-        colors=['#ca6abd', '#55A8E6', '#ffcc5c', '#96ceb4', '#ffeead'], 
+        colors=colors[:len(category_labels)],  # Use the color palette
         shadow=True, 
         startangle=90, 
         explode=[0] * len(category_labels),  # No exploding slices
@@ -299,7 +302,7 @@ def generate_pie_chart(request):
     ax2.bar(
         category_labels, 
         category_sizes, 
-        color=['#ca6abd', '#55A8E6', '#ffcc5c', '#96ceb4', '#ffeead']
+        color=colors[:len(category_labels)]  # Use the color palette
     )
 
     # Adding the count above the bars in the histogram
@@ -327,6 +330,7 @@ def generate_pie_chart(request):
 
     # Send buffer in an HTTP response to the browser with the mime type image/png set
     return HttpResponse(buf.getvalue(), content_type='image/png')
+
 
 
 from django.http import HttpResponse, Http404

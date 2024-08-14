@@ -8,11 +8,11 @@
     <title>Label Image</title>
     <link rel="stylesheet" href="{% static 'processor/css/styles.css' %}">
     <style>
-        /* Inline styles specific to this page */
-        .label-page {
+         /* Inline styles specific to this page */
+         .label-page {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center; /* Center everything vertically */
             min-height: 100vh;
             background-image: url('/static/processor/images/backgroundimagecsdna.jpg');
             background-size: cover;
@@ -24,12 +24,13 @@
             background-color: rgba(0, 0, 0, 0.90);
             border-radius: 10px;
             padding: 40px;
-            width: 80%;
+            width: 90%;
             max-width: 1200px;
             color: #fff;
             text-align: center;
-            position: relative;
-            justify-content: center;
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
         }
 
         .header h1 {
@@ -53,7 +54,8 @@
         }
 
         .image-container img {
-            max-width: 100%;
+            max-width: 600px;
+            width: 100%;
             height: auto;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
@@ -63,6 +65,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            max-width: 200px
             width: 100%;
         }
 
@@ -75,8 +78,10 @@
             margin-bottom: 10px;
             border-radius: 5px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            /*increasing the space between contents inside the category item*/
+            gap: 40px;
         }
 
         .category-label {
@@ -194,6 +199,16 @@
             document.getElementById('label').value = labelValue;
             document.getElementById('label-form').submit();
         }
+
+        // Listen for key presses to trigger the corresponding category button
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;  // Get the pressed key
+            const categoryButton = document.querySelector(`[data-key="${key}"]`);
+
+            if (categoryButton) {
+                submitLabel(key);  // Submit the label if a valid key is pressed
+            }
+        });
     </script>
 </head>
 <body>
@@ -203,6 +218,7 @@
             <button class="btn-next"><a href="{% url 'all_labeled' %}">Next &rarr;</a></button>
 
             <div class="header">
+                
                 <h1><span class="cs">Label</span> <span class="DNA">Image</span></h1>
                 <p>Label the image by selecting a category. Use corresponding keys (1 to {{ num_categories }}) to label images.</p>
             </div>
@@ -230,7 +246,7 @@
 
                 <div class="progress-bar">
                     <div class="progress-bar-fill"></div>
-                    <div class="progress-text">{{ analyzed_images }} / {{ total_images }} ({{ progress }}%)</div>
+                    <div class="progress-text">{{ analyzed_images }} / {{ total_images }} ({{ progress | floatformat:0 }}%)</div>
                 </div>
             {% else %}
                 <p>No more images to label.</p>
